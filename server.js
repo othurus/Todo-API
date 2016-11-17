@@ -1,6 +1,7 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var _ = require('underscore');
+var bcrypt = require('bcryptjs');
 var db = require('./db.js');
 var app = express();
 var PORT = process.env.PORT || 3000;
@@ -86,14 +87,33 @@ app.post('/todos', function (req, res) {
 });
 //POST /users
 app.post('/users', function (req, res) {
-        var body = _.pick(req.body, 'email', 'password');
-        db.user.create(body).then(function (user) {
-            res.json(user.toPublicJSON());
-        }, function (e) {
-            res.status(400).json(e);
-        });
-    })
-    //DELETE /todos/:id
+    var body = _.pick(req.body, 'email', 'password');
+    db.user.create(body).then(function (user) {
+        res.json(user.toPublicJSON());
+    }, function (e) {
+        res.status(400).json(e);
+    });
+});
+//POST /users/login
+app.post('/users/login', function (req, res) {
+    var body = _.pick(req.body, 'email', 'password');
+    db.user.authenticate(body).then(function (user) {
+        res.json(user.toPublicJSON());
+    }, function () {
+        res.status(401).send();
+    });
+    //    db.user.findOne({
+    //        where: {
+    //            email: body.email
+    //        }
+    //    }).then(function (user) {
+    //        if (!user || !bcrypt.compareSync(body.password, user.get('password_hash'))) return res.status(401).send();
+    //        res.json(user.toPublicJSON());
+    //    }, function (e) {
+    //        res.status(500).json(e);
+    //    });
+});
+//DELETE /todos/:id
 app.delete('/todos/:id', function (req, res) {
     var todoId = parseInt(req.params.id, 10);
     db.todo.destroy({
