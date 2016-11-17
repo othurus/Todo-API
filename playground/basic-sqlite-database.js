@@ -4,7 +4,6 @@ var sequelize = new Sequelize(undefined, undefined, undefined, {
     'dialect': 'sqlite', // which db to use
     'storage': __dirname + '/basic-sqlite-database.sqlite' //specific to sqlite
 });
-//create a model (table/entity)
 var Todo = sequelize.define('todo', {
     description: {
         type: Sequelize.STRING
@@ -19,41 +18,35 @@ var Todo = sequelize.define('todo', {
         , defaultValue: false
     }
 });
-//force = true -> create table even if exist (default: false -> only create if not exist)
+var User = sequelize.define('user', {
+    email: Sequelize.STRING
+});
+Todo.belongsTo(User);
+User.hasMany(Todo);
 sequelize.sync({
-    //force: true
-}).then(function () { //sync is a promise
+    force: false
+}).then(function () {
     console.log('Everything is synced');
-    Todo.findOne({
-        where: {
-            id: 1
-        }
-    }).then(function (todo) {
-        if (todo) console.log(todo.toJSON());
-        else console.log('unable to find todo item with the specified id');
+    User.findById(1).then(function (user) {
+        user.getTodos({
+            where: {
+                completed: false
+            }
+        }).then(function (todos) {
+            todos.forEach(function (todo) {
+                console.log(todo.toJSON());
+            });
+        });
     });
-    //    Todo.create({
-    //        description: 'Walk the dog'
+    //    User.create({
+    //        email: "andrew@gmail.com"
     //    }).then(function () {
     //        return Todo.create({
-    //            description: 'solve exam'
+    //            description: 'Clean the yard'
     //        });
-    //    }).then(function () {
-    //        //return Todo.findById(1);
-    //        return Todo.findAll({ //return arr
-    //            where: {
-    //                completed: false
-    //            }
+    //    }).then(function (todo) {
+    //        User.findById(1).then(function (user) {
+    //            user.addTodo(todo);
     //        });
-    //    }).then(function (todos) {
-    //        console.log('Printing the todo items:')
-    //        if (todos) {
-    //            todos.forEach(function (todo) {
-    //                console.log(todo.toJSON());
-    //            });
-    //        }
-    //        else console.log('no todo found!');
-    //    }).catch(function (e) {
-    //        console.log(e);
     //    });
 });
