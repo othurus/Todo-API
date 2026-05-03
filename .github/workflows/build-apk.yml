@@ -18,16 +18,27 @@ jobs:
         with:
           java-version: "17"
           distribution: "temurin"
+          cache: gradle
 
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
 
+      - name: Accept Android SDK licenses
+        run: yes | sdkmanager --licenses || true
+
+      - name: Install required SDK components
+        run: |
+          sdkmanager "platforms;android-34" "build-tools;34.0.0" "platform-tools"
+
+      - name: Create local.properties
+        run: echo "sdk.dir=$ANDROID_SDK_ROOT" > android-rss-reader/local.properties
+
       - name: Make gradlew executable
-        run: chmod +x ./gradlew
+        run: chmod +x gradlew
         working-directory: android-rss-reader
 
       - name: Build debug APK
-        run: ./gradlew assembleDebug --no-daemon
+        run: ./gradlew assembleDebug --no-daemon --stacktrace
         working-directory: android-rss-reader
 
       - name: Upload APK
