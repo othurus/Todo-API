@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">RSS Reader</string>
+    <string name="add_feed">Add Feed</string>
+    <string name="feed_url_hint">https://example.com/feed</string>
+    <string name="all_articles">All Articles</string>
+    <string name="unread">Unread</string>
+    <string name="saved">Saved</string>
+    <string name="refresh">Refresh</string>
+    <string name="mark_all_read">Mark all as read</string>
+    <string name="open_in_browser">Open in browser</string>
+    <string name="share">Share</string>
+    <string name="no_feeds_message">Add your first RSS feed to get started</string>
+</resources>
